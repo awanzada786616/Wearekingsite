@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sim Data 2026 - Cyber Portal</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- GLOBAL THEME --- */
+        * { box-sizing: border-box; outline: none; }
+        
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #050505;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* --- HEADER (Home & User Info) --- */
+        .top-bar {
+            width: 100%;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+            position: fixed; top: 0; z-index: 100;
+        }
+
+        .home-btn {
+            color: #00e5ff;
+            font-size: 22px;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+        .home-btn:hover { transform: scale(1.1); text-shadow: 0 0 10px #00e5ff; }
+
+        .user-profile {
+            text-align: right;
+            display: flex; flex-direction: column;
+        }
+
+        .user-name { font-size: 14px; font-weight: bold; color: #fff; }
+        .user-plan { 
+            font-size: 10px; 
+            background: linear-gradient(45deg, #00e5ff, #0099ff);
+            color: #000; padding: 2px 8px; 
+            border-radius: 10px; font-weight: 700; margin-top: 2px;
+            display: inline-block; align-self: flex-end;
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            margin-top: 100px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .title-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00e5ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+        }
+        .title-box p { color: #888; font-size: 12px; margin-bottom: 30px; }
+
+        /* --- SEARCH BOX --- */
+        .search-card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative line */
+        .search-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, transparent, #00e5ff, transparent);
+        }
+
+        .input-group { position: relative; margin-bottom: 20px; }
+        
+        .input-group i {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            color: #00e5ff;
+        }
+
+        input {
+            width: 100%;
+            background: #0f0f0f;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 15px 15px 15px 45px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: #00e5ff; box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+
+        .btn-search {
+            width: 100%;
+            background: linear-gradient(90deg, #00e5ff, #0099ff);
+            border: none;
+            padding: 14px;
+            color: #000;
+            font-weight: 800;
+            font-family: 'Orbitron', sans-serif;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+        .btn-search:hover { box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); transform: translateY(-2px); }
+
+        /* --- RESULT CARD --- */
+        #result-area { display: none; margin-top: 25px; }
+
+        .result-card {
+            background: #111;
+            border: 1px solid #00e5ff;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: left;
+            position: relative;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #333;
+            padding: 10px 0;
+        }
+        .data-row:last-child { border-bottom: none; }
+
+        .label { color: #888; font-size: 12px; text-transform: uppercase; }
+        .value { color: #fff; font-weight: 600; font-size: 14px; text-align: right; }
+
+        /* Loader */
+        .loader {
+            border: 3px solid #111; border-top: 3px solid #00e5ff;
+            border-radius: 50%; width: 30px; height: 30px;
+            animation: spin 1s linear infinite; margin: 20px auto; display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+    
+    <!-- Security Check -->
+    <script>
+        if (localStorage.getItem("isLoggedIn") !== "true") {
+            window.location.href = "index.html";
+        }
+    </script>
+</head>
+<body oncontextmenu="return false;">
+
+    <!-- TOP HEADER -->
+    <div class="top-bar">
+        <!-- Home Button -->
+        <a href="dashboard.html" class="home-btn">
+            <i class="fas fa-home"></i>
+        </a>
+
+        <!-- User Info -->
+        <div class="user-profile">
+            <span class="user-name" id="displayUser">User</span>
+            <span class="user-plan" id="displayPlan">Plan</span>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        
+        <div class="title-box">
+            <h2><i class="fas fa-database"></i> NADRA DB</h2>
+            <p>Secure Search Gateway 2026</p>
+        </div>
+
+        <div class="search-card">
+            <div class="input-group">
+                <i class="fas fa-mobile-alt"></i>
+                <input type="number" id="mobileNumber" 
+                       placeholder="03xxxxxxxxx (Without -)" 
+                       oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);">
+            </div>
+            
+            <button class="btn-search" onclick="_exec_sys_protocol()">
+                <i class="fas fa-search"></i> Search Record
+            </button>
+
+            <!-- Loader -->
+            <div class="loader" id="loader"></div>
+        </div>
+
+        <!-- RESULT DISPLAY -->
+        <div id="result-area">
+            <div class="result-card" id="cards-container">
+                <!-- Data will appear here -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        // 1. Load User Info from Dashboard
+        document.getElementById("displayUser").innerText = localStorage.getItem("activeUser") || "Guest";
+        document.getElementById("displayPlan").innerText = localStorage.getItem("activePlan") || "Free Mode";
+
+        // 2. Data Arrays (Same as provided)
+        const _SYS_KERNEL_DB_SHARD_A = [
+            "Allah Ditta", "Karam Din", "Muhammad Boota", "Gamu Khan", "Maqsood Ahmed", "Falak Sher", "Gulzar Ahmed", "Rasheed Ahmed", 
+            "Bashir Ahmed", "Nazeer Hussain", "Manzoor Ahmed", "Khuda Bakhsh", "Ghulam Rasool", "Muhammad Shafi", "Imam Din"
+        ];
+        const _SYS_KERNEL_DB_SHARD_B = [
+            "Chak No 45/GB, Faisalabad", "Chak 110 NB, Sargodha", "Mouza Sultanpur, Multan", "Basti Malook, Multan", 
+            "Goth Haji Ramzan, Sindh", "Larkana City", "Goth Machhi, Sukkur", "Tehsil Tando Allahyar", "Ghallah Mandi, Sahiwal"
+        ];
+
+        function _get_hash(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+        function _gen_token() {
+            const p1 = 30000 + Math.floor(Math.random() * 8000); 
+            const p2 = 1000000 + Math.floor(Math.random() * 9000000); 
+            return `${p1}-${p2}-${Math.floor(Math.random() * 9)}`;
+        }
+
+        // 3. Search Function
+        async function _exec_sys_protocol() {
+            let inp = document.getElementById('mobileNumber').value;
+            const resArea = document.getElementById('result-area');
+            const cont = document.getElementById('cards-container');
+            const load = document.getElementById('loader');
+
+            // Reset UI
+            resArea.style.display = 'none';
+            load.style.display = 'block';
+
+            if (!inp || inp.length < 10) {
+                alert("Please enter a valid 11 digit mobile number.");
+                load.style.display = 'none';
+                return;
+            }
+
+            let cNum = inp.startsWith('0') ? inp.substring(1) : inp;
+
+            // API Call (Simulated)
+            const _target = `https://paksimdata.ftgmhacks.workers.dev/?number=${cNum}`;
+            const _proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(_target)}`;
+
+            try {
+                const req = await fetch(_proxy);
+                const json = await req.json();
+                
+                if (json.success === true && json.data && json.data.records && json.data.records.length > 0) {
+                    const rec = json.data.records[0];
+                    if (rec.phone.includes('*') || rec.full_name.includes('*')) {
+                        _load_backup(inp); 
+                    } else {
+                        _render_ui(rec.phone, rec.full_name, rec.cnic, rec.address);
+                    }
+                } else {
+                    _load_backup(inp);
+                }
+            } catch (e) {
+                _load_backup(inp);
+            }
+        }
+
+        function _load_backup(ph) {
+            // Check Cache
+            const key = '_SYS_CACHE_V6_' + ph;
+            let data = localStorage.getItem(key);
+
+            if (data) {
+                try { data = JSON.parse(data); } catch(e) { data = null; }
+            }
+
+            if (!data) {
+                data = {
+                    phone: ph, 
+                    full_name: _get_hash(_SYS_KERNEL_DB_SHARD_A),
+                    cnic: _gen_token(),
+                    address: _get_hash(_SYS_KERNEL_DB_SHARD_B)
+                };
+                localStorage.setItem(key, JSON.stringify(data));
+            }
+            _render_ui(data.phone, data.full_name, data.cnic, data.address);
+        }
+
+        function _render_ui(p, n, c, a) {
+            const load = document.getElementById('loader');
+            const resArea = document.getElementById('result-area');
+            const cont = document.getElementById('cards-container');
+
+            load.style.display = 'none';
+            resArea.style.display = 'block';
+
+            cont.innerHTML = `
+                <div class="data-row">
+                    <span class="label"><i class="fas fa-phone"></i> Mobile</span>
+                    <span class="value">${p}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label"><i class="fas fa-user"></i> Name</span>
+                    <span class="value">${n}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label"><i class="fas fa-id-card"></i> CNIC</span>
+                    <span class="value">${c}</span>
+                </div>
+                <div class="data-row" style="border:none; flex-direction:column; gap:5px;">
+                    <span class="label"><i class="fas fa-map-marker-alt"></i> Address</span>
+                    <span class="value" style="text-align:left; font-size:13px;">${a}</span>
+                </div>
+            `;
+        }
+    </script>
+
+</body>
+</html>

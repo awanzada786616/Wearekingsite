@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberData - Dashboard</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- SECURITY HIDE --- */
+        body { display: none; } /* Page tab tak hidden rahega jab tak login check na ho jaye */
+
+        /* --- GLOBAL STYLES --- */
+        * { box-sizing: border-box; }
+        
+        body.loaded {
+            display: block; /* Script check ke baad page show hoga */
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #000;
+            background-image: url('https://wallpaperaccess.com/full/1594680.jpg'); /* Hacker Background */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* Overlay to darken background */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Black tint */
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* --- STYLISH HEADER --- */
+        .header-title {
+            font-family: 'Orbitron', sans-serif; /* Hacker Font */
+            font-size: 38px;
+            font-weight: 900;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* --- USER INFO CARD --- */
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0 30px 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-item i {
+            font-size: 20px;
+            color: #00e5ff;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px #00e5ff;
+        }
+
+        .info-label { font-size: 10px; color: #aaa; text-transform: uppercase; }
+        .info-value { font-size: 16px; font-weight: bold; color: #fff; }
+
+        /* --- TOOLS GRID --- */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 Columns */
+            gap: 15px;
+            padding-bottom: 50px;
+        }
+
+        /* --- TOOL BUTTONS --- */
+        .tool-btn {
+            background: #00e5ff; /* Cyan Color */
+            color: #000;
+            text-decoration: none;
+            padding: 18px 10px;
+            border-radius: 50px; /* Pill Shape */
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.8);
+            background: #fff;
+        }
+
+        /* Full Width Button (Last one) */
+        .full-width {
+            grid-column: span 2;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            background: #ff3b3b;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 59, 59, 0.4);
+        }
+        .logout-btn:hover { background: #ff5252; box-shadow: 0 0 25px rgba(255, 59, 59, 0.8); }
+
+    </style>
+    
+    <!-- SECURITY SCRIPT (Runs Before Page Load) -->
+    <script>
+        // Check agar user logged in nahi hai
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+        
+        if (isLoggedIn !== "true") {
+            // Agar login nahi hai to wapas login page par bhejo
+            window.location.href = "index.html";
+        } else {
+            // Agar login hai to page dikhao
+            document.addEventListener("DOMContentLoaded", function() {
+                document.body.classList.add("loaded");
+            });
+        }
+    </script>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        
+        <!-- Title -->
+        <h1 class="header-title">CYBERDATA</h1>
+
+        <!-- User Info Bar -->
+        <div class="user-info">
+            <div class="info-item">
+                <i class="fas fa-crown"></i>
+                <span class="info-value" id="displayPlan">Loading...</span>
+                <span class="info-label">User Plan</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-user-astronaut"></i>
+                <span class="info-value" id="displayUser">User</span>
+                <span class="info-label">Username</span>
+            </div>
+        </div>
+
+        <!-- Tools Buttons Grid -->
+        <div class="tools-grid">
+            <!-- Row 1 -->
+            <a href="#" class="tool-btn">Sim Data 2026</a>
+            <a href="#" class="tool-btn">Other Numbers</a>
+
+            <!-- Row 2 -->
+            <a href="#" class="tool-btn">Family Tree</a>
+            <a href="#" class="tool-btn">Cnic Copy</a>
+
+            <!-- Row 3 -->
+            <a href="#" class="tool-btn">Nadra Copy</a>
+            <a href="#" class="tool-btn">Covid Pic</a>
+
+            <!-- Row 4 -->
+            <a href="#" class="tool-btn">Location Trace</a>
+            <a href="#" class="tool-btn">Whatsapp Unban</a>
+
+            <!-- Row 5 -->
+            <a href="#" class="tool-btn">Whatsapp Logout</a>
+            <a href="#" class="tool-btn">Cnic Issue Date</a>
+
+            <!-- Row 6 (Full Width) -->
+            <a href="#" class="tool-btn full-width">Mobile Hacking</a>
+            
+            <!-- Logout Button -->
+            <a href="#" class="tool-btn full-width logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt" style="margin-right:8px;"></i> Logout Panel
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. Load User Data ---
+        // Humne index.html mein login ke waqt data save nahi kiya tha, 
+        // Isliye main yahan pehle LocalStorage se uthata hu.
+        // NOTE: Aapko Index.html mein chhota sa change karna padega (Neeche bataya hai).
+        
+        const currentUser = localStorage.getItem("activeUser") || "Unknown";
+        // Agar package save nahi kiya to default "Monthly" dikha do ya fetch karo
+        // Filhal dummy text agar data na ho:
+        const currentPlan = localStorage.getItem("activePlan") || "VIP Member";
+
+        document.getElementById("displayUser").innerText = currentUser;
+        document.getElementById("displayPlan").innerText = currentPlan;
+
+
+        // --- 2. Logout Function ---
+        function logout() {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("activeUser");
+            localStorage.removeItem("activePlan");
+            window.location.href = "index.html";
+        }
+    </script>
+
+</body>
+</html>

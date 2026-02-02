@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - We are king</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- Neumorphism Design --- */
+        * { box-sizing: border-box; }
+        
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #ecf0f3;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: 350px;
+            padding: 40px 30px;
+            background-color: #ecf0f3;
+            border-radius: 20px;
+            box-shadow: 13px 13px 20px #cbced1, -13px -13px 20px #ffffff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container {
+            width: 80px; height: 80px; margin: 0 auto 10px;
+            border-radius: 50%; padding: 4px;
+            background: #ecf0f3;
+            box-shadow: 5px 5px 10px #cbced1, -5px -5px 10px #ffffff;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .logo-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+        .title { margin-top: 15px; margin-bottom: 30px; font-size: 20px; font-weight: 700; color: #555; letter-spacing: 0.5px; }
+
+        .input-field { position: relative; margin-bottom: 20px; }
+        .input-field i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #555; font-size: 16px; }
+        .input-field input {
+            width: 100%; background: #ecf0f3; border: none; outline: none;
+            padding: 15px 15px 15px 50px; border-radius: 50px; color: #333; font-size: 14px;
+            box-shadow: inset 6px 6px 6px #cbced1, inset -6px -6px 6px #ffffff;
+        }
+
+        /* Black Buttons */
+        .btn-black {
+            width: 100%; background: #000; color: white; border: none;
+            padding: 12px; border-radius: 25px; font-size: 14px; font-weight: 500;
+            cursor: pointer; margin-bottom: 15px; letter-spacing: 0.5px;
+            box-shadow: 6px 6px 10px #cbced1, -6px -6px 10px #ffffff;
+            transition: transform 0.1s; display: block; text-decoration: none;
+        }
+        .btn-black:active { transform: scale(0.98); }
+
+        /* Social Icons */
+        .social-icons { display: flex; justify-content: center; gap: 20px; margin-top: 25px; }
+        .social-icon {
+            width: 50px; height: 50px; border-radius: 50%; background: #ecf0f3;
+            display: flex; align-items: center; justify-content: center;
+            color: #333; font-size: 18px; text-decoration: none;
+            box-shadow: 6px 6px 10px #cbced1, -6px -6px 10px #ffffff; transition: color 0.3s;
+        }
+        .social-icon:hover { color: #000; }
+
+        .footer { text-align: center; opacity: 0.9; margin-top: 10px; }
+        .footer img { width: 300px; display: block; margin: 0 auto 5px auto; }
+        .footer p { font-size: 12px; color: #555; font-weight: 500; margin: 0; letter-spacing: 0.5px; }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/whBChW1N/logo.png" alt="Logo">
+        </div>
+        
+        <div class="title">We are king</div>
+
+        <!-- Inputs -->
+        <div class="input-field">
+            <i class="far fa-user"></i>
+            <input type="text" id="username" placeholder="Username">
+        </div>
+
+        <div class="input-field">
+            <i class="fas fa-key"></i>
+            <input type="password" id="password" placeholder="Password">
+        </div>
+
+        <!-- Buttons -->
+        <button class="btn-black" onclick="handleLogin()">Login</button>
+        
+        <!-- Links -->
+        <button class="btn-black" onclick="window.open('https://youtube.com', '_blank')">Watch Demo</button>
+        <button class="btn-black" onclick="window.open('https://wa.me/+994401879953?text=Hy+sir+I+want+to+buy+login', '_blank')">Contact Admin</button>
+        <button class="btn-black" onclick="window.open('https://chat.whatsapp.', '_blank')">Join WhatsApp</button>
+
+        <div class="social-icons">
+            <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-telegram-plane"></i></a>
+            <a href="https://wa.me/+994401879953" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <img src="https://i.ibb.co/0RYYp2bk/img1.gif" alt="Working">
+        <p>Verified Secure System</p>
+    </div>
+
+    <!-- FIREBASE LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, where, updateDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9z_N93wf9RFzEYZEIlXE8yiCcnJuWC4A",
+            authDomain: "cybertoolkit-65b65.firebaseapp.com",
+            projectId: "cybertoolkit-65b65",
+            storageBucket: "cybertoolkit-65b65.firebasestorage.app",
+            messagingSenderId: "412853505695",
+            appId: "1:412853505695:web:050010f944695ddff41caa"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- Helper: Get Device ID ---
+        function getLocalDeviceID() {
+            let id = localStorage.getItem("device_signature");
+            if (!id) {
+                id = "dev_" + Math.random().toString(36).substr(2, 9) + Date.now();
+                localStorage.setItem("device_signature", id);
+            }
+            return id;
+        }
+
+        // --- Main Login Function ---
+        window.handleLogin = async () => {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            const currentDeviceID = getLocalDeviceID();
+            const btn = document.querySelector('button[onclick="handleLogin()"]');
+
+            if(!u || !p) { alert("Please enter Username and Password"); return; }
+            
+            // UI Loading
+            const originalText = btn.innerText;
+            btn.innerText = "Verifying...";
+            btn.style.opacity = "0.7";
+
+            try {
+                // 1. Username Password Check
+                const q = query(collection(db, "users"), where("username", "==", u), where("password", "==", p));
+                const snap = await getDocs(q);
+
+                if(snap.empty) {
+                    alert("❌ Invalid Username or Password!");
+                    resetBtn(btn, originalText);
+                    return;
+                }
+
+                // User data fetch
+                const userDoc = snap.docs[0];
+                const userData = userDoc.data();
+                const userID = userDoc.id;
+
+                // ----------------------------------------------------
+                // 🕒 DATE & TIME EXPIRY CHECK (STRICT)
+                // ----------------------------------------------------
+                const expiryDate = new Date(userData.expiry); // Database date
+                const now = new Date(); // Current time
+
+                if (now > expiryDate) {
+                    alert("⚠️ ACCOUNT EXPIRED!\nYour subscription ended on:\n" + userData.expiry.replace("T", " ") + "\n\nPlease contact admin to renew.");
+                    resetBtn(btn, originalText);
+                    return; // Stop here, do not login
+                }
+
+                // 2. Device Lock Check
+                if (userData.deviceLockEnabled === true) {
+                    // Case A: First Time Login (Link Device)
+                    if (!userData.registeredDeviceId) {
+                        const confirmLink = confirm("⚠️ Security Alert:\nDo you want to lock your account to THIS device?");
+                        if(confirmLink) {
+                            await updateDoc(doc(db, "users", userID), { registeredDeviceId: currentDeviceID });
+                            loginSuccess(userData.username, userData.package);
+                        } else {
+                            resetBtn(btn, originalText);
+                        }
+                    } 
+                    // Case B: Device Matched
+                    else if (userData.registeredDeviceId === currentDeviceID) {
+                        loginSuccess(userData.username, userData.package);
+                    } 
+                    // Case C: Device Mismatch
+                    else {
+                        alert("⛔ ACCESS DENIED!\nThis account is locked to another device.");
+                        resetBtn(btn, originalText);
+                    }
+                } 
+                else {
+                    // Lock Disabled -> Direct Login
+                    loginSuccess(userData.username, userData.package);
+                }
+
+            } catch (e) {
+                console.error("Login Error:", e);
+                alert("Connection Error! Check internet.");
+                resetBtn(btn, originalText);
+            }
+        };
+
+        // --- Success Handler ---
+        function loginSuccess(username, planName) {
+            // Save Session
+            localStorage.setItem("isLoggedIn", "true");
+            
+            // Save Data for Dashboard Display
+            localStorage.setItem("activeUser", username);
+            localStorage.setItem("activePlan", planName);
+
+            alert("✅ Login Successful! Redirecting...");
+            window.location.href = "dashboard.html"; 
+        }
+
+        // --- Reset Button UI ---
+        function resetBtn(btn, text) {
+            btn.innerText = text;
+            btn.style.opacity = "1";
+        }
+    </script>
+</body>
+</html>
